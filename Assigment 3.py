@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import csv
 
 class Duck:
@@ -19,10 +20,6 @@ with open("duck_data.csv", "r", newline = "") as csv_file:
 duck_data = [Duck(duck_data[i][0], duck_data[i][1], duck_data[i][2],
              duck_data[i][3], duck_data[i][4], duck_data[i][5]) for i in range(1,len(duck_data))]
 
-# x_coords = [i for i in range(len(duck_data))]
-# y_coords = [duck.body_mass_g for duck in duck_data]
-
-#length_cm
 
 def create_scatter(x_coords, y_coords, x_label = "x", y_label = "y", data_label = "data"):
     fig, ax = plt.subplots()
@@ -44,14 +41,20 @@ def plot_by_attribute(attribute):
     elif attribute == "body_mass_g":
         x_coords = [duck.body_mass_g for duck in duck_data]
     else:
-        raise NameError("This attribute does not exist")
+        messagebox.showerror("Programm Error", "This attribute does not exist")
+        return
+
 
     y_coords = [(duck.body_mass_g + duck.wingspan_cm) / 2 for duck in duck_data]
 
     create_scatter(x_coords, y_coords, attribute, "Average of other attributes", "duck")
 
 def bar_chart_by_id(id):
-    duck = find_duck_by_id(int(id)) #int check needed
+    duck = try_find_duck_by_id(id)
+    if not duck:
+        messagebox.showerror("Programm Error", "Duck with this id does not exist")
+        return
+
     attributes = [duck.length_cm, duck.wingspan_cm, duck.body_mass_g]
     attribute_names = ["length_cm", "wingspan_cm", "body_mass_g"]
 
@@ -61,45 +64,28 @@ def bar_chart_by_id(id):
 
     plt.show()
 
-
-
-def find_duck_by_id(id):
+def try_find_duck_by_id(id):
+    try:
+        id = int(id)
+    except ValueError:
+        messagebox.showerror("Programm Error", "Please input correct id")
+        return None
+    
     for duck in duck_data:
         if duck.id == id:
             return duck #is it a good function?
-
-
+    return None
 
 window = tk.Tk()
-#window.geometry("370x135")
-#window.minsize(400, 110)
+window.geometry("400x160")
+window.minsize(395, 155)
+window.maxsize(600, 300)
 window.title("Assigment 3")
-
-# frame = tk.Frame(window)
-# frame.pack()  
-
-# first_frame = tk.Frame(window)  
-# first_frame.pack(side = "left") 
-
-# second_frame = tk.Frame(window)  
-# second_frame.pack(side = "left") 
-
-# tk.Grid.rowconfigure(window,0,weight=1)
-# tk.Grid.rowconfigure(window,1,weight=1)
-
-# graph_button = tk.Button(window, text="Create a graph", command = lambda: plot_by_attribute("length_cm"))
-# graph_button.grid(column=0, row=0, padx=10, sticky=tk.SW, pady=15)
-# graph_label = tk.Label(window, text="Display a bar chart of a duck\'s measurements")
-# graph_label.grid(column=1, row=0, sticky=tk.SW, pady=15)
-
-# graph_button = tk.Button(window, text="Create a graph", command = lambda: plot_by_attribute("length_cm"))
-# graph_button.grid(column=0, row=1, padx=10, sticky=tk.NW, pady=15)
-# graph_label = tk.Label(window, text="Display a scatter plot of a attribute measurements")
-# graph_label.grid(column=1, row=1, sticky=tk.NW, pady=15)
 
 frame = tk.Frame(window)
 frame.pack()  
 
+#creating frame for bar chart
 create_bar_frame = tk.LabelFrame(frame, text='Display a bar chart of a duck\'s measurements')
 create_bar_frame.grid(row = 0, column = 0, sticky = "news", padx = 10, pady = 10)
 
@@ -112,7 +98,7 @@ id_entry.grid(row = 0, column = 1, padx = 10, pady = 10)
 bar_button = tk.Button(create_bar_frame, text="Create a graph", command = lambda: bar_chart_by_id(id_entry.get()))
 bar_button.grid(row = 0, column = 2, padx = 5)
 
-
+#creating frame for scatter
 create_scatter_frame = tk.LabelFrame(frame, text='Display a scatter plot of attribute measurements')
 create_scatter_frame.grid(row = 1, column = 0, sticky = "news", padx = 10, pady = 10)
 
@@ -126,3 +112,5 @@ scatter_button = tk.Button(create_scatter_frame, text="Create a graph", command 
 scatter_button.grid(row = 0, column = 2, padx = 5)
 
 window.mainloop()
+
+#does close button work as an exit?
