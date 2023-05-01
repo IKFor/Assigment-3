@@ -44,14 +44,14 @@ def plot_by_attribute(attribute):
         messagebox.showerror("Programm Error", "This attribute does not exist")
         return
 
-
     y_coords = [(duck.body_mass_g + duck.wingspan_cm) / 2 for duck in duck_data]
 
     create_scatter(x_coords, y_coords, attribute, "Average of other attributes", "duck")
 
 def bar_chart_by_id(id):
     duck = try_find_duck_by_id(id)
-    if not duck:
+
+    if not duck: #is it good?
         messagebox.showerror("Programm Error", "Duck with this id does not exist")
         return
 
@@ -61,6 +61,9 @@ def bar_chart_by_id(id):
     fig, ax = plt.subplots()
 
     ax.bar(attribute_names, attributes, width = 0.4)
+
+    ax.set_ylabel("Measurement", loc = "center")
+    ax.set_title(f"Attributes for Duck {id}: {duck.species}", pad = 15)
 
     plt.show()
 
@@ -86,7 +89,7 @@ frame = tk.Frame(window)
 frame.pack()  
 
 #creating frame for bar chart
-create_bar_frame = tk.LabelFrame(frame, text='Display a bar chart of a duck\'s measurements')
+create_bar_frame = tk.LabelFrame(frame, text = "Display a bar chart of a duck's measurements")
 create_bar_frame.grid(row = 0, column = 0, sticky = "news", padx = 10, pady = 10)
 
 bar_label = tk.Label(create_bar_frame, text="Enter the duck's id")
@@ -95,11 +98,11 @@ bar_label.grid(row = 0, column = 0, padx = 5)
 id_entry = tk.Entry(create_bar_frame)
 id_entry.grid(row = 0, column = 1, padx = 10, pady = 10)
 
-bar_button = tk.Button(create_bar_frame, text="Create a graph", command = lambda: bar_chart_by_id(id_entry.get()))
+bar_button = tk.Button(create_bar_frame, text = "Create a graph", command = lambda: bar_chart_by_id(id_entry.get()))
 bar_button.grid(row = 0, column = 2, padx = 5)
 
 #creating frame for scatter
-create_scatter_frame = tk.LabelFrame(frame, text='Display a scatter plot of attribute measurements')
+create_scatter_frame = tk.LabelFrame(frame, text = "Display a scatter plot of attribute measurements")
 create_scatter_frame.grid(row = 1, column = 0, sticky = "news", padx = 10, pady = 10)
 
 scatter_label = tk.Label(create_scatter_frame, text="Choose attribute")
