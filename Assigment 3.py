@@ -12,19 +12,6 @@ class Duck:
         self.wingspan_cm = float(wingspan_cm)
         self.body_mass_g = float(body_mass_g)
 
-def create_plot(x_coords, y_coords, x_label = "x", y_label = "y", data_label = "data"):
-    fig, ax = plt.subplots()
-
-    ax.scatter(x_coords, y_coords, label = data_label)
-    #ax. (create another graph)
-
-    ax.set_xlabel(x_label, loc = "right", )
-    ax.set_ylabel(y_label, loc = "center")
-    ax.set_title("Duck graph", pad = 15)
-    ax.legend(loc = "lower right")
-
-    plt.show()
-
 with open("duck_data.csv", "r", newline = "") as csv_file:
     csv_reader = csv.reader(csv_file)
     duck_data = [row for row in csv_reader]
@@ -36,6 +23,19 @@ duck_data = [Duck(duck_data[i][0], duck_data[i][1], duck_data[i][2],
 # y_coords = [duck.body_mass_g for duck in duck_data]
 
 #length_cm
+
+def create_scatter(x_coords, y_coords, x_label = "x", y_label = "y", data_label = "data"):
+    fig, ax = plt.subplots()
+
+    ax.scatter(x_coords, y_coords, label = data_label)
+
+    ax.set_xlabel(x_label, loc = "right", )
+    ax.set_ylabel(y_label, loc = "center")
+    ax.set_title("Duck graph", pad = 15)
+    ax.legend(loc = "lower right")
+
+    plt.show()
+
 def plot_by_attribute(attribute):
     if attribute == "length_cm":
         x_coords = [duck.length_cm for duck in duck_data]
@@ -44,12 +44,30 @@ def plot_by_attribute(attribute):
     elif attribute == "body_mass_g":
         x_coords = [duck.body_mass_g for duck in duck_data]
     else:
-        raise NameError("this attribute does not exist")
+        raise NameError("This attribute does not exist")
 
     y_coords = [(duck.body_mass_g + duck.wingspan_cm) / 2 for duck in duck_data]
 
-    create_plot(x_coords, y_coords, attribute, "Average of other attributes", "duck")
-    
+    create_scatter(x_coords, y_coords, attribute, "Average of other attributes", "duck")
+
+def bar_chart_by_id(id):
+    duck = find_duck_by_id(int(id)) #int check needed
+    attributes = [duck.length_cm, duck.wingspan_cm, duck.body_mass_g]
+    attribute_names = ["length_cm", "wingspan_cm", "body_mass_g"]
+
+    fig, ax = plt.subplots()
+
+    ax.bar(attribute_names, attributes, width = 0.4)
+
+    plt.show()
+
+
+
+def find_duck_by_id(id):
+    for duck in duck_data:
+        if duck.id == id:
+            return duck #is it a good function?
+
 
 
 window = tk.Tk()
@@ -91,7 +109,7 @@ bar_label.grid(row = 0, column = 0, padx = 5)
 id_entry = tk.Entry(create_bar_frame)
 id_entry.grid(row = 0, column = 1, padx = 10, pady = 10)
 
-bar_button = tk.Button(create_bar_frame, text="Create a graph", command = lambda: plot_by_attribute("length_cm"))
+bar_button = tk.Button(create_bar_frame, text="Create a graph", command = lambda: bar_chart_by_id(id_entry.get()))
 bar_button.grid(row = 0, column = 2, padx = 5)
 
 
